@@ -1,199 +1,113 @@
 # 🛡️ SecureShield
 
-SecureShield is a beginner-friendly, enterprise-grade Java security library designed to make backend security simple, fast, and easy to integrate.
+SecureShield is a beginner-friendly, enterprise-style Java security library with a simple static API and modular internals.
 
-It provides simple APIs for token authentication, password hashing, and system protection — without the complexity of traditional frameworks.
+## Features
 
----
+### 1) Authentication
+- JWT access token creation and verification
+- JWT refresh token creation
+- Access token refresh via refresh token
+- Token expiration handling
+- Token revocation support
+- Token claims extraction
+- Token signature/integrity validation
+- Refresh token reuse detection
 
-# ✨ Features
+### 2) Password Security
+- BCrypt hashing and verification
+- Automatic salt handling via BCrypt
+- Password policy validation (min length + complexity)
+- Breached password list support
 
-- 🔐 Token creation and verification
-- 🔑 Password hashing and validation
-- ⚡ Lightweight and fast
-- 🧩 Modular design
-- 👶 Beginner-friendly API
-- 📦 Easy Maven integration
+### 3) Authorization (RBAC)
+- Role definition
+- Permission assignment
+- Permission verification
+- Defaults:
+  - `ADMIN` → full access (`*`)
+  - `USER` → limited access
 
-Upcoming:
+### 4) Cryptography
+- AES/GCM encryption and decryption
+- Secret key generation
+- Secure random utility
+- Base64 encode/decode
+- Constant-time string comparison helper
 
-- JWT cryptographic tokens
-- Rate limiting
-- Role-based access control
-- Session management
-- Attack detection and logging
+### 5) Session Management
+- Session creation
+- Session validation
+- Session expiration
+- Session revocation
 
----
+### 6) Attack Protection
+- Brute-force mitigation via request limiting
+- Replay protection (refresh token reuse detection)
+- Token tamper detection (JWT signature verification)
+- Timing-safe compare utility
 
-# 🚀 Quick Start
+### 7) Rate Limiting
+- Per-user request limiting
+- Per-IP request limiting
+- Default policy: max 100 requests per minute
 
-## Create Token
+### 8) Audit Logging
+- Login success/failure
+- Token creation and verification failure
+- Password change event hook available
+
+### 9) Exception Handling
+- `SecureShieldException`
+- `InvalidTokenException`
+- `PasswordMismatchException`
+- `AuthenticationException`
+
+### 10) Configuration
+Centralized config via `SecureShieldConfig` with system properties and env var overrides for:
+- Secret key
+- Access/refresh expirations
+- Password policy
+- Rate limiting policy
+
+## Developer-Friendly API
 
 ```java
-String token = SecureShield.createToken("ayush");
+String token = SecureShield.createToken("user");
+boolean ok = SecureShield.verifyToken(token);
+
+String hash = SecureShield.hashPassword("Strong@Pass1");
+boolean passOk = SecureShield.verifyPassword("Strong@Pass1", hash);
 ```
 
-## Verify Token
+## Enterprise Project Structure
 
-```java
-boolean valid = SecureShield.verifyToken(token);
-```
-
-## Hash Password
-
-```java
-String hash = SecureShield.hashPassword("mypassword");
-```
-
-## Verify Password
-
-```java
-boolean match = SecureShield.checkPassword("mypassword", hash);
-```
-
----
-
-# 🏗️ Architecture Diagram
-
-```mermaid
-flowchart TD
-
-A[Client Application] --> B[SecureShield API]
-
-B --> C[Token Service]
-B --> D[Password Service]
-
-C --> E[Create Token]
-C --> F[Verify Token]
-
-D --> G[Hash Password]
-D --> H[Verify Password]
-
-E --> I[(Secure Token)]
-F --> J[(Authentication Result)]
-
-G --> K[(Password Hash)]
-H --> L[(Verification Result)]
-```
-
----
-
-# ⚙️ How SecureShield Works
-
-```mermaid
-sequenceDiagram
-
-participant User
-participant Application
-participant SecureShield
-participant SecurityEngine
-
-User->>Application: Login request
-Application->>SecureShield: authenticate()
-SecureShield->>SecurityEngine: verify credentials
-SecurityEngine-->>SecureShield: result
-SecureShield-->>Application: authentication status
-Application-->>User: access granted/denied
-```
-
----
-
-# 📁 Project Structure
-
-```
-secureshield/
-│
+```text
+secureshield
 ├── pom.xml
-├── README.md
-│
 ├── src/main/java/com/secureshield/
-│   ├── core/
-│   │   └── SecureShield.java
-│   │
-│   ├── jwt/
-│   ├── password/
-│   └── util/
-│
-└── target/
+│   ├── core/SecureShield.java
+│   ├── config/SecureShieldConfig.java
+│   ├── jwt/JWTService.java
+│   ├── jwt/TokenValidator.java
+│   ├── jwt/TokenParser.java
+│   ├── password/PasswordService.java
+│   ├── password/PasswordValidator.java
+│   ├── crypto/EncryptionService.java
+│   ├── crypto/DecryptionService.java
+│   ├── session/SessionService.java
+│   ├── rate/RateLimiter.java
+│   ├── audit/AuditLogger.java
+│   ├── exception/*.java
+│   ├── util/CryptoUtils.java
+│   └── model/{TokenClaims,SecurityContext}.java
+└── src/test/java/com/secureshield/core/SecureShieldTest.java
 ```
 
----
-
-# 📦 Installation (Maven)
-
-```xml
-<dependency>
-    <groupId>com.secureshield</groupId>
-    <artifactId>secureshield</artifactId>
-    <version>1.0.0</version>
-</dependency>
-```
-
----
-
-# 🎯 Design Goals
-
-SecureShield is designed to be:
-
-- Easy for beginners
-- Secure for production
-- Lightweight and fast
-- Easy to extend
-- Easy to integrate
-
----
-
-# 🧠 Example Usage
-
-```java
-import com.secureshield.core.SecureShield;
-
-public class Example {
-
-    public static void main(String[] args) {
-
-        String token = SecureShield.createToken("ayush");
-
-        boolean valid = SecureShield.verifyToken(token);
-
-        System.out.println(valid);
-    }
-}
-```
-
----
-
-# 🔮 Future Roadmap
-
-- JWT cryptographic implementation
-- Secure password hashing (BCrypt)
-- Rate limiting system
-- Role-based access control
-- Attack detection
-- Audit logging
-
----
-
-# 🤝 Contributing
-
-Contributions are welcome.
-
-Steps:
-
-1. Fork the repository
-2. Create feature branch
-3. Commit changes
-4. Push branch
-5. Create Pull Request
-
----
-
-# 📜 License
-
-MIT License
-
----
-
-# ⭐ Support
-
-If you find SecureShield useful, please give it a star.
+## Future
+- OAuth2
+- MFA
+- API keys
+- Secure cookies
+- CSRF protection
+- Secure headers
